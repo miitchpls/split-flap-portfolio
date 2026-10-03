@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A split-flap portfolio inspired by vintage station departure boards." />
+    <title>Michele's portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&display=swap" />
+    <!-- Linked rather than imported from JavaScript, so it applies before the first paint. -->
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <main>
+        <h1 class="sr-only">Michele — Software engineer</h1>
+        <section class="cabinet" aria-label="Split-flap display — Welcome" aria-busy="true">
+          <div class="board-surface">
+            <div class="board-frame">
+              <div id="board" class="board" aria-hidden="true"></div>
+              <nav class="board-actions" aria-label="Portfolio navigation"></nav>
+            </div>
+          </div>
+          <footer class="cabinet-footer">
+            <span class="interaction-hint">CLICK A ROW OR PRESS A NUMBER</span>
+            <span class="maker-mark">miitchpls.com</span>
+            <div class="board-controls">
+              <button id="sound" class="icon-button" type="button" aria-label="Sound" title="Sound" aria-pressed="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 9h3l5-4v14l-5-4H4z" />
+                  <path class="icon-on" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" />
+                  <path class="icon-off" d="M16 9.5l5 5M21 9.5l-5 5" />
+                </svg>
+              </button>
+              <button id="motion" class="icon-button" type="button" aria-label="Animation" title="Animation" aria-pressed="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="6" y="4" width="12" height="16" rx="1.5" />
+                  <path d="M6 12h12" />
+                  <path class="icon-off" d="M3.5 20.5l17-17" />
+                </svg>
+              </button>
+              <button id="fast" class="icon-button" type="button" aria-label="Fast animation" title="Fast animation" aria-pressed="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M13.5 3L5.5 13.5h6L10.5 21l8-10.5h-6z" />
+                </svg>
+              </button>
+            </div>
+          </footer>
+          <div id="announcement" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+        </section>
+      </main>
+    </div>
+    <noscript>This interactive portfolio needs JavaScript. Please enable it to use the split-flap display.</noscript>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

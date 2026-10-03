@@ -1,0 +1,75 @@
+:root {
+  /* Palette: every colour in the project is defined here, once. */
+  --black: #0a0a0a;                    /* cell recess, split line, letters on yellow */
+  --charcoal: #1d1d1d;                 /* darkest casing, flap edges */
+  --graphite: #242424;                 /* casing, lower flap */
+  --slate: #2a2a2a;                    /* upper flap */
+  --steel: #323232;                    /* lit casing corner, flap highlight */
+  --ivory: #eeede7;                    /* printed letters, focus */
+  --muted: #9a9a96;                    /* footer text */
+  --dim: #5e5e5b;                      /* controls switched off */
+  --yellow: #f5c400;                   /* highlighted flaps, active controls */
+  --yellow-lo: #d9ad00;                /* lower half of a yellow flap, control hover */
+  --shade: rgb(0 0 0 / .55);           /* drop shadows */
+  --shine: rgb(255 255 255 / .09);     /* edge highlights */
+  --tint: rgb(255 255 255 / .025);     /* row hover */
+
+  --font: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+
+  color-scheme: dark;
+  min-height: 100%;
+  font-family: var(--font);
+  color: var(--ivory);
+  /* Painted on the root so the page never flashes white while loading. */
+  background: linear-gradient(115deg, var(--steel) 0%, var(--graphite) 38%, var(--charcoal) 100%) fixed;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+button:focus-visible { outline: 1px solid var(--ivory); outline-offset: 5px; }
+/* Hidden until main.js has the fonts and the board ready. */
+.app { min-height: 100dvh; opacity: 0; transition: opacity .35s ease-out; }
+.ready .app { opacity: 1; }
+main { width: 100%; }
+.cabinet { --frame: clamp(16px, 3.5vw, 68px); --footer-height: max(56px, calc(var(--frame) + 28px)); position: relative; height: 100dvh; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) var(--footer-height); padding: var(--frame) var(--frame) 0; }
+.cabinet::before { content: ''; pointer-events: none; position: absolute; inset: 0; opacity: .32; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23ffffff' opacity='.1' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E"); }
+.board-surface { position: relative; min-width: 0; min-height: 0; overflow: hidden; display: grid; place-items: center; }
+.board-frame { position: relative; }
+.board { display: grid; grid-template-columns: repeat(var(--cols), var(--cell-width)); grid-auto-rows: var(--cell-height); column-gap: var(--gap); row-gap: var(--row-gap); }
+.flap { position: relative; perspective: 400px; border-radius: 1px; background: var(--black); box-shadow: -1px -2px 2px var(--shade), 1px 1px 1px var(--shine), inset 2px 0 2px var(--black); font-weight: 600; font-size: min(calc(var(--cell-width) * 1.05), calc(var(--cell-height) * .68)); color: var(--ivory); text-shadow: 0 0 1px var(--shine), 0 1px 1px var(--shade); }
+.flap-half { position: absolute; left: 2px; right: 2px; height: 50%; overflow: hidden; backface-visibility: hidden; }
+.flap-upper { top: 0; transform-origin: 50% 100%; border-radius: 1px 1px 0 0; background: linear-gradient(100deg, var(--steel), var(--slate) 12% 80%, var(--charcoal)); box-shadow: inset 0 1px 0 var(--shine); }
+.flap-lower { bottom: 0; transform-origin: 50% 0; border-radius: 0 0 1px 1px; background: linear-gradient(100deg, var(--slate), var(--graphite) 12% 80%, var(--charcoal)); box-shadow: inset 0 -1px 1px var(--shade); }
+.glyph { position: absolute; left: 0; right: 0; height: 200%; display: flex; align-items: center; justify-content: center; line-height: 1; }
+.flap-upper .glyph { top: 0; }
+.flap-lower .glyph { top: -100%; }
+.flap-fall, .flap-rise { visibility: hidden; z-index: 2; }
+.flap-rise { transform: rotateX(90deg); }
+/* The split between the halves keeps the same proportion at every cell size. */
+.flap::after { --split: clamp(1px, calc(var(--cell-height) * .032), 2px); content: ''; position: absolute; top: calc(50% - var(--split) / 2); left: 0; right: 0; height: var(--split); pointer-events: none; z-index: 3; background: var(--black); }
+.flap.yellow .flap-upper { background: var(--yellow); }
+.flap.yellow .flap-lower { background: var(--yellow-lo); }
+.flap.yellow { color: var(--black); text-shadow: none; }
+.board-actions { position: absolute; inset: 0; display: grid; grid-template-rows: repeat(var(--rows), var(--cell-height)); row-gap: var(--row-gap); pointer-events: none; }
+.board-actions > * { pointer-events: auto; border: 1px solid transparent; background: transparent; border-radius: 1px; transition: background .15s; }
+/* Rows wake up only once every flap has landed. */
+.cabinet[aria-busy="true"] .board-actions > * { pointer-events: none; }
+.board-actions > :hover { background: var(--tint); }
+.board-actions > :focus-visible { outline: 1px solid var(--ivory); outline-offset: 4px; }
+/* As wide as the board, so the hint and the controls line up with its edges. */
+.cabinet-footer { position: relative; width: var(--board-width, 100%); max-width: 100%; justify-self: center; min-height: 0; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 20px; color: var(--muted); font-size: 13px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; line-height: 1.4; }
+.board-controls { justify-self: end; display: flex; gap: 4px; margin-right: -8px; }
+.icon-button { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 0; background: none; color: var(--dim); transition: color .15s; }
+.icon-button[aria-pressed="true"] { color: var(--yellow); }
+@media (hover: hover) { .icon-button:hover { color: var(--yellow-lo); } }
+.icon-button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.icon-button[aria-pressed="true"] .icon-off, .icon-button[aria-pressed="false"] .icon-on { display: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 700px) {
+  .cabinet { --frame: 17px; --footer-height: 68px; }
+  .cabinet-footer { gap: 8px; font-size: 11px; letter-spacing: .12em; }
+  .interaction-hint { max-width: 110px; }
+}
+@media (max-width: 380px) { .cabinet { --frame: 12px; } }

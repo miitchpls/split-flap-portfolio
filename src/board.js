@@ -1,14 +1,5 @@
 import { CHARS } from './layout.js';
 
-// Resolves true after `ms`, or false as soon as `signal` aborts.
-const wait = (ms, signal) => new Promise(resolve => {
-  if (signal.aborted) { resolve(false); return; }
-  const finish = () => { signal.removeEventListener('abort', cancel); resolve(true); };
-  const timer = setTimeout(finish, ms);
-  const cancel = () => { clearTimeout(timer); resolve(false); };
-  signal.addEventListener('abort', cancel, { once: true });
-});
-
 // CSS cubic-bezier timing functions, as plain functions of progress 0..1.
 const curve = (s, a, b) => 3 * a * s * (1 - s) ** 2 + 3 * b * s * s * (1 - s) + s ** 3;
 const bezier = (x1, y1, x2, y2) => t => {
@@ -33,13 +24,10 @@ const write = (el, text) => {
 const SCRAMBLE = CHARS.replace(/[^A-Z0-9]/g, '');
 const LANDING_FLAPS = 3;
 
-// A grid of split-flap cells. Each cell steps through CHARS one flap at a
-// time. By default every step awaits its real animation before the next one
-// begins; that costs a couple of frames per half flap, and gives the board
-// its unhurried look. In fast mode a single clock works out where every flap
-// should be from the elapsed time, so the configured speeds are the real ones.
+// One clock drives both speeds, keeping timing independent of animation promises.
+// Fast mode shortens each flip, never the stagger between cells.
 export class SplitFlapBoard {
-  constructor(element, { flipSpeed = 55, spinSpeed = flipSpeed, stagger = 30 } = {}) {
+  constructor(element, { flipSpeed = 70, spinSpeed = 32, stagger = 30 } = {}) {
     this.element = element;
     this.flipSpeed = flipSpeed;
     this.spinSpeed = spinSpeed;
@@ -48,8 +36,6 @@ export class SplitFlapBoard {
     this.cells = [];
     this.cols = 0;
     this.rows = 0;
-    this.controller = new AbortController();
-    this.generation = 0;
     this.running = null;
     this.jobs = [];
     this.frame = null;
@@ -109,17 +95,7 @@ export class SplitFlapBoard {
       onSettled();
     };
     this.running = { targets, starts, onSettled };
-    if (this.fast) {
-      this.showClocked(targets, starts, settle);
-      return;
-    }
-    const { signal } = this.controller;
-    const generation = this.generation;
-    const now = performance.now();
-    const jobs = this.cells.map((cell, i) => this.spin(cell, targets[i], Math.max(0, starts[i] - now), signal));
-    Promise.all(jobs).then(() => {
-      if (generation === this.generation) settle();
-    });
+    this.showClocked(targets, starts, settle);
   }
 
   // The wave: later columns and rows start a little later.
@@ -132,11 +108,12 @@ export class SplitFlapBoard {
   // Spin quickly while far away; the last few flaps land at full weight.
   steps(from, to) {
     const steps = [];
+    const speed = this.fast ? 0.65 : 1;
     let index = CHARS.indexOf(from);
     let remaining = (CHARS.indexOf(to) - index + CHARS.length) % CHARS.length;
     while (remaining > 0) {
       index = (index + 1) % CHARS.length;
-      steps.push({ char: CHARS[index], half: remaining > LANDING_FLAPS ? this.spinSpeed : this.flipSpeed });
+      steps.push({ char: CHARS[index], half: (remaining > LANDING_FLAPS ? this.spinSpeed : this.flipSpeed) * speed });
       remaining--;
     }
     return steps;
@@ -158,66 +135,6 @@ export class SplitFlapBoard {
     cell.el.classList.toggle('yellow', yellow);
     cell.upper.firstChild.textContent = cell.lower.firstChild.textContent = char;
   }
-
-  /* ---------- default mode: each half flap awaits the previous one ---------- */
-
-  async spin(cell, { char, yellow }, delay, signal) {
-    if (cell.char === char && cell.yellow === yellow) return;
-    if (!await wait(delay, signal)) return;
-    cell.yellow = yellow;
-    cell.el.classList.toggle('yellow', yellow);
-    for (const step of this.steps(cell.char, char)) {
-      if (!await this.flip(cell, step.char, signal, step.half)) return;
-    }
-  }
-
-  // The falling flap carries the OLD upper half and uncovers the NEW one;
-  // the OLD lower half stays until the NEW lower half lands on it.
-  async flip(cell, next, signal, duration = this.flipSpeed) {
-    const old = cell.char;
-    cell.upper.firstChild.textContent = next;
-    cell.fall.firstChild.textContent = old;
-    cell.rise.firstChild.textContent = next;
-    cell.fall.style.visibility = 'visible';
-    const fall = cell.fall.animate(
-      [{ transform: 'rotateX(0deg)' }, { transform: 'rotateX(-90deg)' }],
-      { duration, easing: 'ease-in', fill: 'forwards' },
-    );
-    let rise;
-    const restore = () => {
-      fall.cancel();
-      rise?.cancel();
-      cell.fall.style.visibility = cell.rise.style.visibility = '';
-      cell.upper.firstChild.textContent = cell.lower.firstChild.textContent = old;
-    };
-    signal.addEventListener('abort', restore, { once: true });
-    this.click();
-    try {
-      await fall.finished;
-      if (signal.aborted) return false;
-      cell.fall.style.visibility = '';
-      fall.cancel();
-      cell.rise.style.visibility = 'visible';
-      rise = cell.rise.animate(
-        [{ transform: 'rotateX(90deg)' }, { transform: 'rotateX(0deg)' }],
-        { duration, easing: 'ease-out', fill: 'forwards' },
-      );
-      await rise.finished;
-      if (signal.aborted) return false;
-      cell.lower.firstChild.textContent = next;
-      cell.rise.style.visibility = '';
-      rise.cancel();
-      cell.char = next;
-      return true;
-    } catch (error) {
-      if (signal.aborted) return false;
-      throw error;
-    } finally {
-      signal.removeEventListener('abort', restore);
-    }
-  }
-
-  /* ---------- fast mode: one clock drives every flap ---------- */
 
   showClocked(targets, starts, onSettled) {
     const now = performance.now();
@@ -299,9 +216,6 @@ export class SplitFlapBoard {
 
   // Stops every flap on its last completed character.
   cancel() {
-    this.controller.abort();
-    this.controller = new AbortController();
-    this.generation++;
     this.running = null;
     if (this.frame) cancelAnimationFrame(this.frame);
     this.frame = null;

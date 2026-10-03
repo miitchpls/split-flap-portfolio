@@ -116,7 +116,14 @@ window.addEventListener('keydown', event => {
   // A shortcut is not aimed at whatever was clicked last (say, a footer icon):
   // let go of it, so it does not light up with a keyboard focus ring.
   if (!actions.contains(document.activeElement)) document.activeElement?.blur();
-  if (event.key === 'Escape') { go(HOME); return; }
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    // Escape dismisses the current selection instead of transferring it to
+    // the first home-menu row when render() rebuilds the controls.
+    document.activeElement?.blur();
+    go(HOME);
+    return;
+  }
   event.preventDefault();
   if (busy) return;
   if (action.href) actions.querySelector(`a[data-key="${action.key}"]`)?.click();

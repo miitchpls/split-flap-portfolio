@@ -200,8 +200,8 @@ export const SCREENS = {
    SETTINGS
    ===================================================================== */
 export const SETTINGS = {
-  flipSpeed: 55,      // ms per half flap as a flap lands on its letter: higher = slower
-  spinSpeed: 18,      // ms per half flap while it is still far from its letter
+  flipSpeed: 70,      // ms per half flap as a flap lands on its letter: higher = slower
+  spinSpeed: 32,      // ms per half flap while it is still far from its letter
   stagger: 30,        // ms between neighbouring columns (wave effect)
   align: 'left',      // default horizontal alignment: "left" or "center"
   valign: 'center',   // default vertical alignment: "center" or "top"

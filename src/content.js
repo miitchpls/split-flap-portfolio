@@ -31,7 +31,7 @@ export const SCREENS = {
       '',
       { key: '1', text: 'ABOUT ME', to: 'about' },
       { key: '2', text: 'PROJECTS', to: 'projects' },
-      { key: '3', text: 'CV', href: 'https://drive.google.com/file/d/14ilfrxn33lwh_pVzT6Yc_UHC40K-owhp/view?usp=drive_link' },
+      { key: '3', text: 'CV', href: 'https://drive.google.com/file/d/1jH9J178Jm-S2nlwkfW7NKzqhWu2PWRyX/view?usp=sharing' },
       { key: '4', text: 'LINKS', to: 'links' },
     ],
   },
@@ -123,13 +123,12 @@ export const SCREENS = {
   projects: {
     title: 'Projects',
     lines: [
-      'PROJECTS',
+      '[PROJECTS]',
       'STUFF I BUILT',
       '',
-      { key: '1', text: 'SPLIT-FLAP PORTFOLIO', to: 'split-flap' },
-      { key: '2', text: 'GLUTZ EACCESS', label: 'Glutz eAccess', to: 'glutz' },
-      { key: '3', text: 'NOESIUM', to: 'noesium' },
-      { key: '4', text: "BUCK'S ROW", label: "Buck's Row", to: 'bucks-row' },
+      { key: '1', text: 'GLUTZ EACCESS', label: 'Glutz eAccess', to: 'glutz' },
+      { key: '2', text: 'NOESIUM', to: 'noesium' },
+      { key: '3', text: "BUCK'S ROW", label: "Buck's Row", to: 'bucks-row' },
       '',
       { key: '0', text: 'BACK TO MENU', to: 'home' },
     ],
@@ -137,7 +136,7 @@ export const SCREENS = {
   links: {
     title: 'Links',
     lines: [
-      'LINKS',
+      '[LINKS]',
       'FIND ME ONLINE',
       '',
       { key: '1', text: 'LINKEDIN', label: 'LinkedIn', href: 'https://www.linkedin.com/in/michelegreco3/' },
@@ -146,25 +145,13 @@ export const SCREENS = {
       { key: '0', text: 'BACK TO MENU', to: 'home' },
     ],
   },
-  'split-flap': {
-    title: 'Split-flap portfolio',
-    lines: [
-      'SPLIT-FLAP PORTFOLIO',
-      '[ON TIME]',
-      '',
-      "YOU'RE LOOKING AT IT. A PLAIN WEBSITE FELT TOO BORING.",
-      '',
-      { key: '1', text: 'VIEW ON GITHUB', label: 'View on GitHub', href: 'https://github.com/miitchpls/split-flap-portfolio' },
-      { key: '0', text: 'BACK TO PROJECTS', to: 'projects' },
-    ],
-  },
   glutz: {
     title: 'Glutz eAccess',
     lines: [
-      'GLUTZ EACCESS',
-      '[HOME ASSISTANT]',
+      '[GLUTZ EACCESS]',
+      'HA INTEGRATION',
       '',
-      "TOO LAZY TO OPEN YET ANOTHER APP. THE INTEGRATION DIDN'T EXIST, SO I BUILT IT.",
+      'CONTROL GLUTZ DOORS FROM HOME ASSISTANT.',
       '',
       { key: '1', text: 'VIEW ON GITHUB', label: 'View on GitHub', href: 'https://github.com/miitchpls/hass-glutz-eaccess' },
       { key: '0', text: 'BACK TO PROJECTS', to: 'projects' },
@@ -173,10 +160,10 @@ export const SCREENS = {
   noesium: {
     title: 'Noesium',
     lines: [
-      'NOESIUM',
-      '[AI-POWERED WIKI]',
+      '[NOESIUM]',
+      'AI-POWERED WIKI',
       '',
-      'AN AI THAT FORGETS EVERYTHING FELT KIND OF DUMB. SO I GAVE IT A MEMORY.',
+      'A PRIVATE, SELF-HOSTED WIKI YOU CAN TALK TO.',
       '',
       { key: '1', text: 'OPEN NOESIUM', label: 'Open noesium.app', href: 'https://noesium.app/' },
       { key: '0', text: 'BACK TO PROJECTS', to: 'projects' },
@@ -185,10 +172,10 @@ export const SCREENS = {
   'bucks-row': {
     title: "Buck's Row",
     lines: [
-      "BUCK'S ROW",
-      '[DEDUCTION GAME]',
+      "[BUCK'S ROW]",
+      'DEDUCTION GAME',
       '',
-      'ONE HIDDEN KILLER AGAINST FIVE DETECTIVES.',
+      'ONE HIDDEN KILLER. FIVE DETECTIVES.',
       '',
       { key: '1', text: 'PLAY NOW', label: "Play Buck's Row", href: 'https://bucksrow.miitchpls.com/' },
       { key: '0', text: 'BACK TO PROJECTS', to: 'projects' },

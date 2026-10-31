@@ -114,7 +114,7 @@ export const SCREENS = {
       'ABOUT ME',
       '[7/7  NEXT STOP]',
       '',
-      'LUGANO IS HOME. THE DREAM? THE FREEDOM TO WORK FROM ANYWHERE, WHEN I FEEL LIKE IT.',
+      'DIGITAL NOMAD. I KEEP SAYING IT OUT LOUD, JUST TO HEAR HOW IT SOUNDS.',
       '',
       { key: '1', text: 'START OVER', to: 'about' },
       { key: '0', text: 'BACK TO MENU', to: 'home' },

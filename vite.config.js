@@ -12,8 +12,10 @@ const baseTitle = title => title.replace(/\s*\(\d+\/\d+\)$/, '');
 // starting from home. Screens no menu reaches come last.
 function readingOrder() {
   const order = [];
+  const seen = new Set();
   const visit = (name, depth) => {
-    if (!SCREENS[name] || order.some(entry => entry.name === name)) return;
+    if (!SCREENS[name] || seen.has(name)) return;
+    seen.add(name);
     order.push({ name, depth });
     for (const line of SCREENS[name].lines) if (isAction(line) && line.to) visit(line.to, depth + 1);
   };
@@ -37,9 +39,11 @@ function textVersion() {
     section = title;
     for (const line of screen.lines) {
       if (isAction(line)) {
-        if (line.href) out.push(`<p><a href="${escape(line.href)}">${escape(line.label ?? plain(line.text))}</a></p>`);
+        if (line.href) out.push(`<p><a href="${escape(line.href)}" target="_blank" rel="noopener noreferrer">${escape(line.label ?? plain(line.text))}</a></p>`);
       } else if (plain(line) && (name === HOME || !same(line, title))) {
-        out.push(`<p>${escape(plain(line))}</p>`);
+        // The first line of home is the name: the page heading when the board is hidden.
+        const tag = name === HOME && !out.length ? 'h1' : 'p';
+        out.push(`<${tag}>${escape(plain(line))}</${tag}>`);
       }
     }
   }

@@ -14,8 +14,10 @@ const listenerOptions = { signal: events.signal };
 const board = new SplitFlapBoard(document.querySelector('#board'), SETTINGS);
 const minRows = cols => requiredRows(SCREENS, cols, SETTINGS);
 
-// The <title> in index.html is the base; other screens add their own title.
+// Home keeps the <title> from index.html; other screens pair its name
+// ("Michele Greco — Software Engineer" -> "Michele Greco") with their own title.
 const SITE_TITLE = document.title;
+const SITE_NAME = SITE_TITLE.split(' — ')[0];
 
 let page = HOME;
 let renderedPage = null;
@@ -54,7 +56,7 @@ function render(animate = motion) {
   const screen = SCREENS[page];
   const plan = placeScreen(layoutScreen(screen, geometry.cols, SETTINGS), geometry.cols, geometry.rows, SETTINGS);
   cabinet.setAttribute('aria-label', `Split-flap display — ${screen.title}`);
-  document.title = page === HOME ? SITE_TITLE : `${SITE_TITLE} — ${screen.title}`;
+  document.title = page === HOME ? SITE_TITLE : `${SITE_NAME} — ${screen.title}`;
   cabinet.dataset.motion = motion ? 'animated' : 'reduced';
   announcement.textContent = '';
   // Rows are rebuilt below; remember whether keyboard focus was on one.

@@ -55,3 +55,4 @@ The board fills the available space: the column count follows the screen width, 
 - `src/main.js`: navigation, resizing, sound and animation controls.
 - `src/style.css`: layout and appearance. All colours live in the `:root` palette.
 - `index.html`: page structure and controls.
+- `vite.config.js`: at build time, writes every screen as plain text into `<noscript id="text-version">`, for crawlers, AI tools and visitors without JavaScript.

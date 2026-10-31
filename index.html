@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&display=swap" />
     <!-- Linked rather than imported from JavaScript, so it applies before the first paint. -->
     <link rel="stylesheet" href="/src/style.css" />
+    <!-- Without JavaScript the board stays empty: show the text version instead. -->
+    <noscript><style>.app { display: none; }</style></noscript>
   </head>
   <body>
     <div class="app">
@@ -56,7 +58,10 @@
         </section>
       </main>
     </div>
-    <noscript>This interactive portfolio needs JavaScript. Please enable it to use the split-flap display.</noscript>
+    <!-- The build fills this with the whole portfolio as plain text (see vite.config.js). -->
+    <noscript id="text-version">
+      <p>This interactive portfolio needs JavaScript. Here is a text version.</p>
+    </noscript>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

@@ -43,11 +43,11 @@ export const SCREENS = {
       '',
       'SINCE 2020 MY PASSION IS ALSO MY JOB. LUCKY ME: NOBODY HAS NOTICED YET.',
       '',
-      { key: '1', text: 'NEXT', to: 'about-next' },
+      { key: '1', text: 'NEXT', to: 'about-now' },
       { key: '0', text: 'BACK TO MENU', to: 'home' },
     ],
   },
-  'about-next': {
+  'about-now': {
     title: 'About me',
     lines: [
       'ABOUT ME',
